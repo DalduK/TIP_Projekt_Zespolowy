@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "webpack --mode development --watch ./TIPproject/frontend/src/index.js --output ./TIPproject/frontend/static/frontend/main.js",
     "build": "webpack --mode production ./TIPproject/frontend/src/index.js --output ./TIPproject/frontend/static/frontend/main.js"
@@ -30,6 +31,9 @@
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^5.2.0"
+    "simple-peer": "^9.6.2",
+    "socket.io-client": "^2.3.0",
+    "styled-components": "^5.2.0",
+    "uuid": "^8.3.0"
   }
 }

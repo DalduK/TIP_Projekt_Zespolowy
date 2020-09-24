@@ -12,7 +12,8 @@ import UnNavbar from "./layout/UnNavbar";
 import { Provider } from "react-redux";
 import store from "../store";
 import PrivateRoute from "./common/PrivateRoute";
-
+import CreateRoom from "./funcionality/CreateRoom";
+import Room from "./funcionality/Room";
 
 class App extends Component {
   render() {
@@ -23,7 +24,9 @@ class App extends Component {
             <UnNavbar />
             <div className="container">
               <Switch>
-                <PrivateRoute exact path="/" component={() => {"test"}} />
+                {/*<PrivateRoute exact path="/" component={() => {return "test"}} />*/}
+                <PrivateRoute path="/" exact component={CreateRoom} />
+                <Route path="/room/:roomID" component={Room} />
                 <Route exact path="/register" component={Register} />
                 <Route exact path="/login" component={Login} />
               </Switch>
