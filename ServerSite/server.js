@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const app = express();
@@ -5,33 +6,52 @@ const server = http.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
 
-const rooms = {};
+const users = {};
 
-io.on("polaczenie", socket => {
-    socket.on("dolacz do pokoju", roomID => {
-        if (rooms[roomID]) {
-            rooms[roomID].push(socket.id);
-        } else {
-            rooms[roomID] = [socket.id];
-        }
-        const otherUser = rooms[roomID].find(id => id !== socket.id);
-        if (otherUser) {
-            socket.emit("inny uzytkownik", otherUser);
-            socket.to(otherUser).emit("nowy uzytkownik polaczony", socket.id);
-        }
-    });
+const socketToRoom = {};
 
-    socket.on("zapytanie", payload => {
-        io.to(payload.target).emit("zapytanie", payload);
-    });
+io.on("connection", (socket) => {
+  socket.on("join room", (roomID) => {
+    if (users[roomID]) {
+      const length = users[roomID].length;
+      if (length === 4) {
+        socket.emit("room full");
+        return;
+      }
+      users[roomID].push(socket.id);
+    } else {
+      users[roomID] = [socket.id];
+    }
+    socketToRoom[socket.id] = roomID;
+    const usersInThisRoom = users[roomID].filter((id) => id !== socket.id);
 
-    socket.on("odpowiedz", payload => {
-        io.to(payload.target).emit("odpowiedz", payload);
-    });
+    socket.emit("all users", usersInThisRoom);
+  });
 
-    socket.on("ice-candidate", incoming => {
-        io.to(incoming.target).emit("ice-candidate", incoming.candidate);
+  socket.on("sending signal", (payload) => {
+    io.to(payload.userToSignal).emit("user joined", {
+      signal: payload.signal,
+      callerID: payload.callerID,
     });
+  });
+
+  socket.on("returning signal", (payload) => {
+    io.to(payload.callerID).emit("receiving returned signal", {
+      signal: payload.signal,
+      id: socket.id,
+    });
+  });
+
+  socket.on("disconnect", () => {
+    const roomID = socketToRoom[socket.id];
+    let room = users[roomID];
+    if (room) {
+      room = room.filter((id) => id !== socket.id);
+      users[roomID] = room;
+    }
+  });
 });
 
-server.listen(5000, () => console.log('serwer dziala na porcie 5000'));
+server.listen(process.env.PORT || 8000, () =>
+  console.log("server is running on port 8000")
+);
