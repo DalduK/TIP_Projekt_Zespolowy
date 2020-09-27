@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from accounts.models import Rooms, UsersRooms
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,3 +30,13 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("incorrect credencials")
+
+class RoomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rooms
+        fields = '__all__'
+
+class UserRoomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsersRooms
+        fields = '__all__'
