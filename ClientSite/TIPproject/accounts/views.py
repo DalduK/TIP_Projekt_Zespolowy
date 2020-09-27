@@ -23,9 +23,9 @@ class RoomsViewDel(generics.RetrieveDestroyAPIView):
 
     def get(self, request):
         id = request.query_params.get('id')
-        print(id)
-        queryset = Rooms.objects.filter(id=id)
-        return Response(serializers.serialize('json', queryset))
+        queryset = Rooms.objects.get(id=id)
+        serializer = RoomsSerializer(queryset)
+        return Response(serializer.data)
 
     def destroy(self, request):
         id = request.query_params.get('id')
@@ -33,9 +33,28 @@ class RoomsViewDel(generics.RetrieveDestroyAPIView):
         self.perform_destroy(queryset)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class UserRoomsViewSet(viewsets.ModelViewSet,generics.ListAPIView):
+class UserRoomsViewSetAll(generics.ListCreateAPIView):
     pagination_class = LimitOffsetPagination
     serializer_class = UserRoomsSerializer
     def get_queryset(self):
         queryset = UsersRooms.objects.all()
         return queryset
+
+
+class UserRoomsViewSetAllUsers(generics.ListCreateAPIView):
+    pagination_class = LimitOffsetPagination
+    serializer_class = UserRoomsSerializer
+    def get_queryset(self):
+        id = self.request.query_params.get('id')
+        queryset = UsersRooms.objects.filter(user_id=id)
+        return queryset
+
+class UserRoomsViewSet(generics.DestroyAPIView):
+    pagination_class = LimitOffsetPagination
+    serializer_class = UserRoomsSerializer
+
+    def destroy(self, request):
+        id = request.query_params.get('id')
+        queryset = UsersRooms.objects.filter(user_id=id)
+        self.perform_destroy(queryset)
+        return Response(status=status.HTTP_204_NO_CONTENT)
