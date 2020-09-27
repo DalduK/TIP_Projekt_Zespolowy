@@ -45,9 +45,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
+    console.log(room);
     if (room) {
       room = room.filter((id) => id !== socket.id);
       users[roomID] = room;
+    }
+    console.log(users[roomID]);
+    if (users[roomID]) {
+      io.to(users[roomID][0]).emit("user left", users[roomID]);
     }
   });
 });
