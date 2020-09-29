@@ -10,6 +10,7 @@ import store from "./store";
 import PrivateRoute from "./components/common/PrivateRoute";
 import CreateRoom from "./routes/CreateRoom";
 import Room from "./routes/Room";
+import Rooms from "./routes/Rooms";
 
 class App extends Component {
   render() {
@@ -20,9 +21,15 @@ class App extends Component {
             <UnNavbar />
             <div className="container">
               <Switch>
-                {/*<PrivateRoute exact path="/" component={() => {return "test"}} />*/}
-                <PrivateRoute path="/" exact component={CreateRoom} />
-                <Route path="/room/:roomID" component={Room} />
+                {/* <PrivateRoute
+                  exact
+                  path="/"
+                  component={() => {
+                    return "test";
+                  }}
+                /> */}
+                <Route path="/" exact component={CreateRoom} />
+                <Route exact path="/room/:roomID" exact component={Room} />
                 <Route exact path="/register" component={Register} />
                 <Route exact path="/login" component={Login} />
               </Switch>

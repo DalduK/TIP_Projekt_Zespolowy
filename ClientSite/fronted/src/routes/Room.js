@@ -25,9 +25,6 @@ const Video = (props) => {
       ref.current.srcObject = stream;
     });
   }, []);
-  useEffect(() => {
-    console.log(props);
-  }, [props]);
 
   return <StyledVideo playsInline autoPlay ref={ref} />;
 };
@@ -39,6 +36,7 @@ const videoConstraints = {
 
 const Room = (props) => {
   const [peers, setPeers] = useState([]);
+  const [historyRoom, setHistoryRoom] = useState();
   const socketRef = useRef();
   const userVideo = useRef();
   const peersRef = useRef([]);
@@ -47,10 +45,11 @@ const Room = (props) => {
   useEffect(() => {
     socketRef.current = io.connect("/");
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({ video: videoConstraints, audio: false })
       .then((stream) => {
         userVideo.current.srcObject = stream;
         socketRef.current.emit("join room", roomID);
+        setHistoryRoom(roomID);
         socketRef.current.on("all users", (users) => {
           const peers = [];
           users.forEach((userID) => {
@@ -63,7 +62,7 @@ const Room = (props) => {
           });
           setPeers(peers);
         });
-        console.log('test');
+
         socketRef.current.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({
@@ -73,27 +72,46 @@ const Room = (props) => {
 
           setPeers((users) => [...users, peer]);
         });
-
-        socketRef.current.on("user left", (payload) => {
-          let array = payload;
-          console.log("left", payload);
-          array.shift();
-          console.log(array);
-          setPeers(array);
-        });
-
         socketRef.current.on("receiving returned signal", (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
       });
-  }, []);
+
+    socketRef.current.on("user left", (payload) => {
+      let array = payload;
+      array.shift();
+      setPeers(array);
+    });
+    socketRef.current.on("user change", (payload) => {
+      let array = payload;
+      console.log("user change");
+      array.shift();
+      setPeers(array);
+    });
+
+    return () => {
+      socketRef.current.emit("disconnect");
+      socketRef.current.off();
+    };
+  }, [, roomID]);
 
   useEffect(() => {
-    socketRef.current.on("users left", (payload) => {
-      console.log("disconnect", payload);
-    });
-  });
+    console.log(historyRoom, roomID);
+    if (historyRoom) {
+      if (historyRoom !== roomID) {
+        console.log(historyRoom, roomID);
+        socketRef.current.emit("user change");
+        console.log(socketRef.current.emit("user change"), "emmit");
+        socketRef.current.on("user left", (payload) => {
+          let array = payload;
+          array.shift();
+          console.log(peers);
+          setPeers(array);
+        });
+      }
+    }
+  }, [props.location.search, roomID]);
 
   function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({

@@ -12,8 +12,9 @@ import UnNavbar from "./layout/UnNavbar";
 import { Provider } from "react-redux";
 import store from "../store";
 import PrivateRoute from "./common/PrivateRoute";
-import CreateRoom from "./funcionality/CreateRoom";
-import Room from "./funcionality/Room";
+import CreateRoom from "../routes/CreateRoom";
+import Room from "../routes/Room";
+import Rooms from "../routes/Rooms";
 
 class App extends Component {
   render() {
@@ -22,6 +23,7 @@ class App extends Component {
         <Router>
           <Fragment>
             <UnNavbar />
+            <Rooms />
             <div className="container">
               <Switch>
                 {/*<PrivateRoute exact path="/" component={() => {return "test"}} />*/}
