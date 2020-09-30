@@ -15,7 +15,7 @@ export const loadUser = () => (dispatch, getState) => {
   dispatch({ type: USER_LOADING });
 
   axios
-    .get("http://localhost:7000/api/auth/user", tokenConfig(getState))
+    .get("http://192.168.195.1:7000/api/auth/user", tokenConfig(getState))
     .then((result) => {
       dispatch({ type: USER_LOADED, payload: result.data });
     })
@@ -37,7 +37,7 @@ export const login = (username, password) => (dispatch) => {
   const body = JSON.stringify({ username, password });
 
   axios
-    .post("http://localhost:7000/api/auth/login", body, config)
+    .post("http://192.168.195.1:7000/api/auth/login", body, config)
     .then((res) => {
       dispatch({
         type: LOGIN_SUCCESS,
@@ -62,7 +62,7 @@ export const register = ({ username, password, email }) => (dispatch) => {
   const body = JSON.stringify({ username, password, email });
 
   axios
-    .post("http://localhost:7000/api/auth/register", body, config)
+    .post("http://192.168.195.1:7000/api/auth/register", body, config)
     .then((res) => {
       dispatch({
         type: REGISTER_SUCCESS,
@@ -79,7 +79,11 @@ export const register = ({ username, password, email }) => (dispatch) => {
 
 export const logout = () => (dispatch, getState) => {
   axios
-    .post("http://localhost:7000/api/auth/logout/", null, tokenConfig(getState))
+    .post(
+      "http://192.168.195.1:7000/api/auth/logout/",
+      null,
+      tokenConfig(getState)
+    )
     .then((result) => {
       dispatch({ type: LOGOUT_SUCCESS });
     })

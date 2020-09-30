@@ -66,7 +66,6 @@ const CreateRoom = (props) => {
                     <MDBBtn
                       outline
                       type={"submit"}
-                      onClick={create}
                       color="white"
                       className="mb-5"
                     >

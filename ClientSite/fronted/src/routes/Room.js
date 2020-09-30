@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalFooter,
   Row,
-    ButtonGroup,
+  ButtonGroup,
 } from "reactstrap";
 import useReactRouter from "use-react-router";
 
@@ -224,10 +224,10 @@ const Room = (props) => {
     setMuted(!muted);
   };
 
-   const handleVideoOnClick = () => {
+  const handleVideoOnClick = () => {
     setVisible(!visible);
   };
-   const handleVideoColor = () => {
+  const handleVideoColor = () => {
     if (visible === true) {
       return "primary";
     } else {
@@ -260,12 +260,20 @@ const Room = (props) => {
 
   return (
     <div>
-      <h3>Copy the room name :<Button
-              color="primary"
-              onClick={() => {navigator.clipboard.writeText(roomID)}}
-              className="w-25"
-              size="sm"
-       ><MDBIcon icon="copy" className="mr-2"></MDBIcon>{roomID}</Button></h3>
+      <h3>
+        Copy the room name :
+        <Button
+          color="primary"
+          onClick={() => {
+            navigator.clipboard.writeText(roomID);
+          }}
+          className="w-25"
+          size="sm"
+        >
+          <MDBIcon icon="copy" className="mr-2"></MDBIcon>
+          {roomID}
+        </Button>
+      </h3>
       <Grid>
         <MDBCard style={{ width: "605px", height: "450px" }}>
           <StyledVideo muted ref={userVideo} autoPlay playsInline />
@@ -279,7 +287,12 @@ const Room = (props) => {
               <MDBIcon icon="microphone" className="mr-2"></MDBIcon>
               {muted ? "Mute" : "Unmute"}
             </Button>
-            <Button color="danger" onClick={toggle} className="w-25 d-flex justify-content-center" size="sm">
+            <Button
+              color="danger"
+              onClick={toggle}
+              className="w-25 d-flex justify-content-center"
+              size="sm"
+            >
               <MDBIcon icon="phone-slash" className="mr-2"></MDBIcon>
               Disconnect
             </Button>
@@ -290,7 +303,7 @@ const Room = (props) => {
               size="sm"
             >
               <MDBIcon icon="video" className="mr-2"></MDBIcon>
-              {muted ? "Camera turned on" : "Camera turned off"}
+              {visible ? "Camera turned on" : "Camera turned off"}
             </Button>
           </ButtonGroup>
           <Modal isOpen={modal} toggle={toggle} className={className}>

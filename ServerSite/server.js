@@ -45,27 +45,29 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
-    console.log('disconnect');
+    console.log("disconnect");
     if (room) {
       room = room.filter((id) => id !== socket.id);
       users[roomID] = room;
     }
     if (users[roomID]) {
-      users[roomID].forEach ((user,index)=>
-      io.to(users[roomID][index]).emit("user left", users[roomID]))
+      users[roomID].forEach((user, index) =>
+        io.to(users[roomID][index]).emit("user left", users[roomID])
+      );
     }
   });
   socket.on("user change", () => {
     const roomID = socketToRoom[socket.id];
     let room = users[roomID];
-    console.log('user change');
+    console.log("user change", room);
     if (room) {
       room = room.filter((id) => id !== socket.id);
       users[roomID] = room;
     }
     if (users[roomID]) {
-      users[roomID].forEach ((user,index)=>
-      io.to(users[roomID][index]).emit("user left", users[roomID]))
+      users[roomID].forEach((user, index) =>
+        io.to(users[roomID][index]).emit("user left", users[roomID])
+      );
     }
   });
 });
